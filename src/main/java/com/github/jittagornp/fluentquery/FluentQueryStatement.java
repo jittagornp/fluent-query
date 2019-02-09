@@ -12,10 +12,16 @@ package com.github.jittagornp.fluentquery;
 public interface FluentQueryStatement {
 
     FluentQueryStatement param(Object object);
+    
+    FluentQueryMapper query();
 
     FluentQueryMapper query(TransactionContext context);
+    
+    FluentQueryMapper execute();
 
     FluentQueryMapper execute(TransactionContext context);
+    
+    FluentQueryMapper update();
 
     FluentQueryMapper update(TransactionContext context);
 

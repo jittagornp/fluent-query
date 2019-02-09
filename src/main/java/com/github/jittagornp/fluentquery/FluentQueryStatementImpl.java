@@ -5,6 +5,7 @@
  */
 package com.github.jittagornp.fluentquery;
 
+import static com.github.jittagornp.fluentquery.FluentQueryTransaction.defineTx;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -21,7 +22,7 @@ import org.slf4j.LoggerFactory;
  * @author jitta
  */
 public class FluentQueryStatementImpl implements FluentQueryStatement {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(FluentQueryStatementImpl.class);
 
     private final String sql;
@@ -50,6 +51,11 @@ public class FluentQueryStatementImpl implements FluentQueryStatement {
         for (int i = 0; i < ps.size(); i++) {
             statement.setObject(i + 1, ps.get(i));
         }
+    }
+
+    @Override
+    public FluentQueryMapper query() {
+        return defineTx((TransactionContext context) -> query(context));
     }
 
     @Override
@@ -85,6 +91,11 @@ public class FluentQueryStatementImpl implements FluentQueryStatement {
     }
 
     @Override
+    public FluentQueryMapper execute() {
+        return defineTx((TransactionContext context) -> execute(context));
+    }
+
+    @Override
     public FluentQueryMapper execute(TransactionContext context) {
         PreparedStatement statement = null;
         ResultSet resultSet = null;
@@ -114,6 +125,11 @@ public class FluentQueryStatementImpl implements FluentQueryStatement {
                 }
             }
         }
+    }
+
+    @Override
+    public FluentQueryMapper update() {
+        return defineTx((TransactionContext context) -> update(context));
     }
 
     @Override
