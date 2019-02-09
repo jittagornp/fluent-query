@@ -1,2 +1,2 @@
 # fluent-query
-Fluent Query API for Java
+Fluent Jdbc Query API for Java
