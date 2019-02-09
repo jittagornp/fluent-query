@@ -46,10 +46,17 @@ public class FluentQueryStatementImpl implements FluentQueryStatement {
         return this;
     }
 
-    private void setParams(PreparedStatement statement) throws SQLException {
+    private void setParams(PreparedStatement statement, TransactionContext context) throws SQLException {
         List<Object> ps = getParams();
         for (int i = 0; i < ps.size(); i++) {
-            statement.setObject(i + 1, ps.get(i));
+            Object value = ps.get(i);
+            statement.setObject(i + 1, value);
+            LOG.debug("[{}] : setParam [{}] => ({}) {}", 
+                    context.getTxId(), 
+                    (i+1), 
+                    value == null ? "null" : value.getClass().getSimpleName(), 
+                    value
+            );
         }
     }
 
@@ -63,10 +70,10 @@ public class FluentQueryStatementImpl implements FluentQueryStatement {
         PreparedStatement statement = null;
         ResultSet resultSet = null;
         try {
-            LOG.debug("sql => {}", sql);
+            LOG.debug("[{}] : sql => {}", context.getTxId(), sql);
             Connection connection = context.getConnection();
             statement = connection.prepareStatement(sql);
-            setParams(statement);
+            setParams(statement, context);
             resultSet = statement.executeQuery();
             return new FluentQueryMapperImpl(fatch(resultSet));
         } catch (SQLException ex) {
@@ -100,9 +107,10 @@ public class FluentQueryStatementImpl implements FluentQueryStatement {
         PreparedStatement statement = null;
         ResultSet resultSet = null;
         try {
+            LOG.debug("[{}] : sql => {}", context.getTxId(), sql);
             Connection connection = context.getConnection();
             statement = connection.prepareStatement(sql);
-            setParams(statement);
+            setParams(statement, context);
             statement.execute();
             resultSet = statement.getResultSet();
             return new FluentQueryMapperImpl(fatch(resultSet));
@@ -136,9 +144,10 @@ public class FluentQueryStatementImpl implements FluentQueryStatement {
     public FluentQueryMapper update(TransactionContext context) {
         PreparedStatement statement = null;
         try {
+            LOG.debug("[{}] : sql => {}", context.getTxId(), sql);
             Connection connection = context.getConnection();
             statement = connection.prepareStatement(sql);
-            setParams(statement);
+            setParams(statement, context);
             statement.executeUpdate();
             return new FluentQueryMapperImpl(null);
         } catch (SQLException ex) {
