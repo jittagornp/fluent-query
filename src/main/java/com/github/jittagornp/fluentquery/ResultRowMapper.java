@@ -9,12 +9,8 @@ package com.github.jittagornp.fluentquery;
  *
  * @author jitta
  */
-public interface FluentQueryMapper {
+public interface ResultRowMapper<T> {
 
-    <T> FluentQueryGetter<T> map(Class<T> clazz);
-
-    <T> FluentQueryGetter<T> map(RowMapperCallback<T> callback);
-
-    FluentQueryGetter<ResultRow> map();
+    T map(ResultRow resultRow);
 
 }

@@ -9,9 +9,6 @@ import static com.github.jittagornp.fluentquery.StringUtils.hasText;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -21,13 +18,13 @@ import java.util.List;
  *
  * @author jitta
  */
-public class BeanResultSetMapper<T> implements ResultSetMapper<T> {
+public class BeanResultRowMapper<T> implements ResultRowMapper<T> {
 
     private final Class<T> typeClass;
 
     private final List<Field> fields;
 
-    public BeanResultSetMapper(Class<T> typeClass) {
+    public BeanResultRowMapper(Class<T> typeClass) {
         this.typeClass = typeClass;
         this.fields = getAllFields(typeClass);
     }
@@ -88,26 +85,24 @@ public class BeanResultSetMapper<T> implements ResultSetMapper<T> {
     }
 
     @Override
-    public T map(ResultSet resultSet) {
-        if (resultSet == null) {
+    public T map(ResultRow resultRow) {
+        if (resultRow == null) {
             return null;
         }
         try {
             T instance = typeClass.newInstance();
             List<Field> fs = new ArrayList<>(fields);
-            ResultSetMetaData metaData = resultSet.getMetaData();
-            int columnCount = metaData.getColumnCount();
-            for (int i = 1; i <= columnCount; i++) {
-                String columnName = metaData.getColumnName(i);
-                Object columnValue = trimIfString(resultSet.getObject(columnName));
+            List<String> columnNames = resultRow.getColumnNames();
+            for (String columnName : columnNames) {
+                Object columnValue = trimIfString(resultRow.getObject(columnName));
                 Field field = getFieldOfColumnName(fs, columnName);
                 if (field != null) {
-                    Method method = typeClass.getMethod(toSetterMethodName(columnName), field.getType());
+                    Method method = typeClass.getMethod(toSetterMethodName(field.getName()), field.getType());
                     method.invoke(instance, columnValue);
                 }
             }
             return instance;
-        } catch (InstantiationException | IllegalAccessException | SQLException | NoSuchMethodException | SecurityException | IllegalArgumentException | InvocationTargetException ex) {
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException | IllegalArgumentException | InvocationTargetException ex) {
             throw new RuntimeException(ex);
         }
     }

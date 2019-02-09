@@ -5,20 +5,18 @@
  */
 package com.github.jittagornp.fluentquery;
 
-import java.sql.SQLException;
-
 /**
  *
  * @author jitta
  */
 public interface FluentQueryStatement {
-    
-    FluentQueryStatement of(String sql);
-    
+
     FluentQueryStatement param(Object object);
-    
-    FluentQueryMapper query(TransactionContext context) throws SQLException;
-    
-    FluentQueryMapper update(TransactionContext context) throws SQLException;
-    
+
+    FluentQueryMapper query(TransactionContext context);
+
+    FluentQueryMapper execute(TransactionContext context);
+
+    FluentQueryMapper update(TransactionContext context);
+
 }

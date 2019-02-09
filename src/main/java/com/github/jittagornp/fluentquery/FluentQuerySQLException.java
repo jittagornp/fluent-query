@@ -5,16 +5,16 @@
  */
 package com.github.jittagornp.fluentquery;
 
+import java.sql.SQLException;
+
 /**
  *
  * @author jitta
  */
-public interface FluentQueryMapper {
+public class FluentQuerySQLException extends RuntimeException {
 
-    <T> FluentQueryGetter<T> map(Class<T> clazz);
-
-    <T> FluentQueryGetter<T> map(RowMapperCallback<T> callback);
-
-    FluentQueryGetter<ResultRow> map();
+    public FluentQuerySQLException(SQLException ex) {
+        super(ex);
+    }
 
 }

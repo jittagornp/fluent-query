@@ -9,12 +9,14 @@ package com.github.jittagornp.fluentquery;
  *
  * @author jitta
  */
-public interface FluentQueryMapper {
+public class FluentQuery {
 
-    <T> FluentQueryGetter<T> map(Class<T> clazz);
+    private FluentQuery() {
 
-    <T> FluentQueryGetter<T> map(RowMapperCallback<T> callback);
+    }
 
-    FluentQueryGetter<ResultRow> map();
+    public static FluentQueryStatement ofSql(String sql) {
+        return new FluentQueryStatementImpl(sql);
+    }
 
 }

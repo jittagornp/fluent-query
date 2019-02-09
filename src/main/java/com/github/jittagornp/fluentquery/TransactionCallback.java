@@ -5,14 +5,13 @@
  */
 package com.github.jittagornp.fluentquery;
 
-import java.sql.ResultSet;
-
 /**
  *
  * @author jitta
+ * @param <T>
  */
-public interface ResultSetMapper<T> {
-
-    T map(ResultSet resultSet);
-
+public interface TransactionCallback<T> {
+    
+    T execute(TransactionContext context);
+    
 }

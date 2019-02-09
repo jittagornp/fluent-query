@@ -5,14 +5,7 @@
  */
 package com.github.jittagornp.fluentquery;
 
-import java.math.BigDecimal;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,58 +15,36 @@ import java.util.stream.Collectors;
  */
 public class FluentQueryMapperImpl implements FluentQueryMapper {
 
-    private static final List<String> JAVA_TYPES = Arrays.asList(
-            Boolean.class.getName(),
-            Short.class.getName(),
-            Integer.class.getName(),
-            Long.class.getName(),
-            Float.class.getName(),
-            Double.class.getName(),
-            Date.class.getName(),
-            LocalDate.class.getName(),
-            LocalDateTime.class.getName(),
-            BigDecimal.class.getName(),
-            String.class.getName()
-    );
+    private final List<ResultRow> resultRows;
 
-    private final ResultSet resultSet;
-
-    public FluentQueryMapperImpl(ResultSet resultSet) {
-        this.resultSet = resultSet;
+    public FluentQueryMapperImpl(List<ResultRow> resultRows) {
+        if (resultRows == null) {
+            resultRows = new ArrayList<>();
+        }
+        this.resultRows = resultRows;
     }
 
-    private <T> ResultSetMapper<T> getResultSetMapper(Class<T> clazz) {
-        boolean isJavaType = JAVA_TYPES.contains(clazz.getName());
-        if (isJavaType) {
-            return new JavaTypeResultSetMapper<>(clazz);
+    private <T> ResultRowMapper<T> getResultRowMapper(Class<T> typeClass) {
+        if (ResultRowMappers.contains(typeClass)) {
+            return ResultRowMappers.get(typeClass);
         }
-        return new BeanResultSetMapper<>(clazz);
-    }
-
-    private <T> List<T> fetchResultSet(Class<T> clazz) throws SQLException {
-        try {
-            ResultSetMapper<T> mapper = getResultSetMapper(clazz);
-            List<T> list = new ArrayList<>();
-            while (resultSet.next()) {
-                list.add(mapper.map(resultSet));
-            }
-            return list;
-        } finally {
-            if (resultSet != null) {
-                resultSet.close();
-            }
-        }
+        return new BeanResultRowMapper<>(typeClass);
     }
 
     @Override
-    public <T> FluentQueryGetter<T> map(Class<T> clazz) throws SQLException {
-        return new FluentQueryGetterImpl<>(fetchResultSet(clazz));
-    }
-
-    @Override
-    public <T> FluentQueryGetter map(RowMapperCallback<T> callback) throws SQLException {
+    public <T> FluentQueryGetter<T> map(Class<T> typeClass) {
+        ResultRowMapper<T> mapper = getResultRowMapper(typeClass);
         return new FluentQueryGetterImpl<>(
-                fetchResultSet(ResultRow.class)
+                resultRows.stream()
+                        .map(r -> mapper.map(r))
+                        .collect(Collectors.toList())
+        );
+    }
+
+    @Override
+    public <T> FluentQueryGetter<T> map(RowMapperCallback<T> callback) {
+        return new FluentQueryGetterImpl<>(
+                resultRows
                         .stream()
                         .map(row -> callback.map(row))
                         .collect(Collectors.toList())
@@ -81,8 +52,8 @@ public class FluentQueryMapperImpl implements FluentQueryMapper {
     }
 
     @Override
-    public FluentQueryGetter map() throws SQLException {
-        return map(ResultRow.class);
+    public FluentQueryGetter<ResultRow> map() {
+        return new FluentQueryGetterImpl<>(resultRows);
     }
 
 }
