@@ -12,42 +12,46 @@ https://github.com/brettwooldridge/HikariCP
 
 ### getOne 
 ```java
-ResultRow row = FluentQuery.ofSql("SELECT id FROM user WHERE username = ?")
-                            .param("test")
-                            .query()
-                            .map()
-                            .getOne();
+String sql = "SELECT id FROM user WHERE username = ?";
+ResultRow row = FluentQuery.of(sql)
+                        .param("test")
+                        .query()
+                        .map()
+                        .getOne();
 LOG.debug("id => {}", row.getString("id"));
 ```
 ### getOneMapClass
 ```java
-String id = FluentQuery.ofSql("SELECT id FROM user WHERE username = ?")
-                        .param("test")
-                        .query()
-                        .map(String.class)
-                        .getOne();
+String sql = "SELECT id FROM user WHERE username = ?";
+String id = FluentQuery.of(sql)
+                    .param("test")
+                    .query()
+                    .map(String.class)
+                    .getOne();
 LOG.debug("id => {}", id);
 ```
 
 ### getList 
 ``` java
-List<ResultRow> rows = FluentQuery.ofSql("SELECT domain_name FROM oauth2_allow_domain")
-                                  .query()
-                                  .map()
-                                  .getList();
+String sql = "SELECT domain_name FROM oauth2_allow_domain";
+List<ResultRow> rows = FluentQuery.of(sql)
+                               .query()
+                               .map()
+                               .getList();
 rows.stream().forEach(r -> {
-    LOG.debug("domain => {}", r.getString("domain_name"));
+    System.out.println(r.getString("domain_name"));
 });
 ```
 
 ### getListMapClass
 ``` java
-List<String> domains = FluentQuery.ofSql("SELECT domain_name FROM oauth2_allow_domain")
-                                  .query()
-                                  .map(String.class)
-                                  .getList();
+String sql = "SELECT domain_name FROM oauth2_allow_domain";
+List<String> domains = FluentQuery.of(sql)
+                               .query()
+                               .map(String.class)
+                               .getList();
 domains.stream().forEach(domain -> {
-    LOG.debug("domain => {}", domain);
+    System.out.println(domain);
 });
 ```
 
@@ -73,28 +77,32 @@ public class User {
     //getter and setter 
 }
 
-User user = FluentQuery.ofSql("SELECT * FROM user WHERE username = ?")
-                        .param("test")
-                        .query()
-                        .map(User.class)
-                        .getOne();
-LOG.debug("user => {}", user);
+String sql = "SELECT * FROM user WHERE username = ?";
+User user = FluentQuery.of(sql)
+                    .param("test")
+                    .query()
+                    .map(User.class)
+                    .getOne();
+System.out.println(user);
 ```
 
 ### transaction
 ``` java
 defineTx(tx -> {
 
-        FluentQuery.ofSql("UPDATE user set updated_date = ?, updated_user = ? WHERE username = ?")
-                .param(LocalDateTime.now())
-                .param("jittagornp")
-                .param("test1")
-                .update(tx);
+    String sql = "UPDATE user set updated_date = ?, updated_user = ? WHERE username = ?";
 
-        FluentQuery.ofSql("UPDATE user set updated_date = ?, updated_user = ? WHERE username = ?")
-                .param(LocalDateTime.now())
-                .param("jittagornp")
-                .param("test2")
-                .update(tx);
+    FluentQuery.of(sql)
+            .param(LocalDateTime.now())
+            .param("jittagornp")
+            .param("test1")
+            .update(tx);
+
+    FluentQuery.of(sql)
+            .param(LocalDateTime.now())
+            .param("jittagornp")
+            .param("test2")
+            .update(tx);
+
 });
 ```
