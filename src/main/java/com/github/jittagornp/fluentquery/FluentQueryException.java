@@ -15,4 +15,8 @@ public class FluentQueryException extends RuntimeException {
         super(message);
     }
 
+    public FluentQueryException(Throwable cause) {
+        super(cause);
+    }
+
 }

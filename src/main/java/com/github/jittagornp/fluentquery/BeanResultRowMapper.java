@@ -108,7 +108,7 @@ public class BeanResultRowMapper<T> implements ResultRowMapper<T> {
             }
             return instance;
         } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException | IllegalArgumentException | InvocationTargetException ex) {
-            throw new RuntimeException(ex);
+            throw new FluentQueryException(ex);
         }
     }
 

@@ -180,12 +180,12 @@ public class ResultRowImpl implements ResultRow {
 
     private Object getValue(String columnName) {
         if (!hasText(columnName)) {
-            throw new RuntimeException("Column " + columnName + " not found.");
+            throw new FluentQueryException("Column " + columnName + " not found.");
         }
         Map<String, Object> m = toMap();
         String key = columnName.toUpperCase();
         if (!m.containsKey(key)) {
-            throw new RuntimeException("Column " + key + " not found.");
+            throw new FluentQueryException("Column " + key + " not found.");
         }
         return m.get(key);
     }
