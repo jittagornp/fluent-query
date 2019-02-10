@@ -47,6 +47,26 @@ domains.stream().forEach(domain -> {
 
 ### mapObjectClass
 ``` java
+public class User {
+
+    @ColumnMapping("ID")
+    private String id;
+
+    @ColumnMapping("USERNAME")
+    private String username;
+
+    @ColumnMapping("PASSWORD")
+    private String password;
+
+    @ColumnMapping("CREATED_DATE")
+    private LocalDateTime createdDate;
+
+    @ColumnMapping("CREATED_USER")
+    private String createdUser;
+    
+    //getter and setter 
+}
+
 User user = FluentQuery.ofSql("SELECT * FROM user WHERE username = ?")
                         .param("test")
                         .query()
