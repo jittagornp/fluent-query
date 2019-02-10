@@ -98,7 +98,12 @@ public class BeanResultRowMapper<T> implements ResultRowMapper<T> {
                 Field field = getFieldOfColumnName(fs, columnName);
                 if (field != null) {
                     Method method = typeClass.getMethod(toSetterMethodName(field.getName()), field.getType());
-                    method.invoke(instance, columnValue);
+                    TypeConverter converter = TypeConverters.get(field.getType());
+                    if (converter == null) {
+                        method.invoke(instance, columnValue);
+                    } else {
+                        method.invoke(instance, converter.convert(columnValue));
+                    }
                 }
             }
             return instance;

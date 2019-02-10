@@ -5,10 +5,10 @@
  */
 package com.github.jittagornp.fluentquery;
 
-import java.math.BigDecimal;
-import java.util.Date;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -19,15 +19,9 @@ public class ResultRowMappers {
     private static final Map<Class, ResultRowMapper> map = new HashMap<>();
 
     static {
-        register(Boolean.class, new CastValueResultRowMapper(Boolean.class));
-        register(Short.class, new CastValueResultRowMapper(Short.class));
-        register(Integer.class, new CastValueResultRowMapper(Integer.class));
-        register(Long.class, new CastValueResultRowMapper(Long.class));
-        register(Float.class, new CastValueResultRowMapper(Float.class));
-        register(Double.class, new CastValueResultRowMapper(Double.class));
-        register(Date.class, new CastValueResultRowMapper(Date.class));
-        register(BigDecimal.class, new CastValueResultRowMapper(BigDecimal.class));
-        register(String.class, new CastValueResultRowMapper(String.class));
+        TypeConverters.keys().forEach(typeClass -> {
+            register(typeClass, new CastValueResultRowMapper(typeClass));
+        });
         register(Map.class, new MapResultRowMapper());
     }
 
@@ -45,5 +39,9 @@ public class ResultRowMappers {
 
     public static boolean contains(Class key) {
         return map.containsKey(key);
+    }
+
+    public static Set<Class> keys() {
+        return Collections.unmodifiableSet(map.keySet());
     }
 }

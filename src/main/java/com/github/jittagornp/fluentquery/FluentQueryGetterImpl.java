@@ -21,10 +21,17 @@ public class FluentQueryGetterImpl<T> implements FluentQueryGetter<T> {
         this.rows = rows;
     }
 
+    public static FluentQueryGetterImpl empty() {
+        return new FluentQueryGetterImpl(null);
+    }
+
     @Override
     public T getOne() {
         if (isEmpty(rows)) {
             return null;
+        }
+        if (rows.size() > 1) {
+            throw new FluentQueryGetterException("Result is more than one.");
         }
         return rows.get(0);
     }

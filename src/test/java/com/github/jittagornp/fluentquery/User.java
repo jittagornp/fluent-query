@@ -5,6 +5,7 @@
  */
 package com.github.jittagornp.fluentquery;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -23,7 +24,7 @@ public class User {
     private String password;
 
     @ColumnMapping("CREATED_DATE")
-    private Date createdDate;
+    private LocalDateTime createdDate;
 
     @ColumnMapping("CREATED_USER")
     private String createdUser;
@@ -52,11 +53,11 @@ public class User {
         this.password = password;
     }
 
-    public Date getCreatedDate() {
+    public LocalDateTime getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(Date createdDate) {
+    public void setCreatedDate(LocalDateTime createdDate) {
         this.createdDate = createdDate;
     }
 

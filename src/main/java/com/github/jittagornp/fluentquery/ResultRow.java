@@ -22,55 +22,59 @@ public interface ResultRow {
 
     Boolean getBoolean(String columnName);
 
-    Boolean getBoolean(int index);
+    Boolean getBoolean(int columnIndex);
 
     Byte getByte(String columnName);
 
-    Byte getByte(int index);
+    Byte getByte(int columnIndex);
 
     Short getShort(String columnName);
 
-    Short getShort(int index);
+    Short getShort(int columnIndex);
 
     Integer getInteger(String columnName);
 
-    Integer getInteger(int index);
+    Integer getInteger(int columnIndex);
 
     Long getLong(String columnName);
 
-    Long getLong(int index);
+    Long getLong(int columnIndex);
 
     Float getFloat(String columnName);
 
-    Float getFloat(int index);
+    Float getFloat(int columnIndex);
 
     Double getDouble(String columnName);
 
-    Double getDouble(int index);
+    Double getDouble(int columnIndex);
 
     Date getDate(String columnName);
 
-    Date getDate(int index);
+    Date getDate(int columnIndex);
 
     LocalDate getLocalDate(String columnName);
 
-    LocalDate getLocalDate(int index);
+    LocalDate getLocalDate(int columnIndex);
 
     LocalDateTime getLocalDateTime(String columnName);
 
-    LocalDateTime getLocalDateTime(int index);
+    LocalDateTime getLocalDateTime(int columnIndex);
 
     BigDecimal getBigDecimal(String columnName);
 
-    BigDecimal getBigDecimal(int index);
+    BigDecimal getBigDecimal(int columnIndex);
 
     String getString(String columnName);
 
-    String getString(int index);
+    String getString(int columnIndex);
 
     Object getObject(String columnName);
 
-    Object getObject(int index);
+    Object getObject(int columnIndex);
+
+    <T> T get(String columnName, Class<T> typeClass);
+
+    <T> T get(int columnIndex, Class<T> typeClass);
 
     Map<String, Object> toMap();
 

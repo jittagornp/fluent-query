@@ -15,13 +15,17 @@ import java.util.stream.Collectors;
  */
 public class FluentQueryMapperImpl implements FluentQueryMapper {
 
-    private final List<ResultRow> resultRows;
+    private List<ResultRow> resultRows;
 
     public FluentQueryMapperImpl(List<ResultRow> resultRows) {
+        this.resultRows = resultRows;
+    }
+
+    private List<ResultRow> getResultRows() {
         if (resultRows == null) {
             resultRows = new ArrayList<>();
         }
-        this.resultRows = resultRows;
+        return resultRows;
     }
 
     private <T> ResultRowMapper<T> getResultRowMapper(Class<T> typeClass) {
@@ -33,9 +37,13 @@ public class FluentQueryMapperImpl implements FluentQueryMapper {
 
     @Override
     public <T> FluentQueryGetter<T> map(Class<T> typeClass) {
+        if(getResultRows().isEmpty()){
+            return FluentQueryGetterImpl.empty();
+        }
         ResultRowMapper<T> mapper = getResultRowMapper(typeClass);
         return new FluentQueryGetterImpl<>(
-                resultRows.stream()
+                getResultRows()
+                        .stream()
                         .map(r -> mapper.map(r))
                         .collect(Collectors.toList())
         );
@@ -43,8 +51,11 @@ public class FluentQueryMapperImpl implements FluentQueryMapper {
 
     @Override
     public <T> FluentQueryGetter<T> map(RowMapperCallback<T> callback) {
+        if(getResultRows().isEmpty()){
+            return FluentQueryGetterImpl.empty();
+        }
         return new FluentQueryGetterImpl<>(
-                resultRows
+                getResultRows()
                         .stream()
                         .map(row -> callback.map(row))
                         .collect(Collectors.toList())
@@ -53,7 +64,7 @@ public class FluentQueryMapperImpl implements FluentQueryMapper {
 
     @Override
     public FluentQueryGetter<ResultRow> map() {
-        return new FluentQueryGetterImpl<>(resultRows);
+        return new FluentQueryGetterImpl<>(getResultRows());
     }
 
 }

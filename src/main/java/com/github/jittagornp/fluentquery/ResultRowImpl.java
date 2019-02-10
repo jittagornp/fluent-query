@@ -32,79 +32,64 @@ public class ResultRowImpl implements ResultRow {
         }
     }
 
-    private Object getValue(String columnName) {
-        if (!hasText(columnName)) {
-            throw new RuntimeException("Column " + columnName + " not found.");
-        }
-        String key = columnName.toUpperCase();
-        if (!toMap().containsKey(key)) {
-            throw new RuntimeException("Column " + key + " not found.");
-        }
-        return toMap().get(key);
-    }
-
-    private Object getValue(int index) {
-        return getValue(getColumnNames().get(index));
-    }
-
     @Override
     public Boolean getBoolean(String columnName) {
-        return (Boolean) getValue(columnName);
+        return get(columnName, Boolean.class);
     }
 
     @Override
     public Byte getByte(String columnName) {
-        return (Byte) getValue(columnName);
+        return get(columnName, Byte.class);
     }
 
     @Override
     public Short getShort(String columnName) {
-        return (Short) getValue(columnName);
+        return get(columnName, Short.class);
     }
 
     @Override
     public Integer getInteger(String columnName) {
-        return (Integer) getValue(columnName);
+        return get(columnName, Integer.class);
     }
 
     @Override
     public Long getLong(String columnName) {
-        return (Long) getValue(columnName);
+        return get(columnName, Long.class);
     }
 
     @Override
     public Float getFloat(String columnName) {
-        return (Float) getValue(columnName);
+        return get(columnName, Float.class);
     }
 
     @Override
     public Double getDouble(String columnName) {
-        return (Double) getValue(columnName);
+        return get(columnName, Double.class);
     }
 
     @Override
     public Date getDate(String columnName) {
-        return (Date) getValue(columnName);
+        return get(columnName, Date.class);
     }
 
     @Override
     public LocalDate getLocalDate(String columnName) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return get(columnName, LocalDate.class);
     }
 
     @Override
     public LocalDateTime getLocalDateTime(String columnName) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return get(columnName, LocalDateTime.class);
     }
 
     @Override
     public BigDecimal getBigDecimal(String columnName) {
-        return (BigDecimal) getValue(columnName);
+        return get(columnName, BigDecimal.class);
     }
 
     @Override
     public String getString(String columnName) {
-        return (String) getValue(columnName);
+        return get(columnName, String.class);
     }
 
     @Override
@@ -121,68 +106,68 @@ public class ResultRowImpl implements ResultRow {
     }
 
     @Override
-    public Boolean getBoolean(int index) {
-        return (Boolean) getValue(index);
+    public Boolean getBoolean(int columnIndex) {
+        return get(columnIndex, Boolean.class);
     }
 
     @Override
-    public Byte getByte(int index) {
-        return (Byte) getValue(index);
+    public Byte getByte(int columnIndex) {
+        return get(columnIndex, Byte.class);
     }
 
     @Override
-    public Short getShort(int index) {
-        return (Short) getValue(index);
+    public Short getShort(int columnIndex) {
+        return get(columnIndex, Short.class);
     }
 
     @Override
-    public Integer getInteger(int index) {
-        return (Integer) getValue(index);
+    public Integer getInteger(int columnIndex) {
+        return get(columnIndex, Integer.class);
     }
 
     @Override
-    public Long getLong(int index) {
-        return (Long) getValue(index);
+    public Long getLong(int columnIndex) {
+        return get(columnIndex, Long.class);
     }
 
     @Override
-    public Float getFloat(int index) {
-        return (Float) getValue(index);
+    public Float getFloat(int columnIndex) {
+        return get(columnIndex, Float.class);
     }
 
     @Override
-    public Double getDouble(int index) {
-        return (Double) getValue(index);
+    public Double getDouble(int columnIndex) {
+        return get(columnIndex, Double.class);
     }
 
     @Override
-    public Date getDate(int index) {
-        return (Date) getValue(index);
+    public Date getDate(int columnIndex) {
+        return get(columnIndex, Date.class);
     }
 
     @Override
-    public LocalDate getLocalDate(int index) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public LocalDate getLocalDate(int columnIndex) {
+        return get(columnIndex, LocalDate.class);
     }
 
     @Override
-    public LocalDateTime getLocalDateTime(int index) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public LocalDateTime getLocalDateTime(int columnIndex) {
+        return get(columnIndex, LocalDateTime.class);
     }
 
     @Override
-    public BigDecimal getBigDecimal(int index) {
-        return (BigDecimal) getValue(index);
+    public BigDecimal getBigDecimal(int columnIndex) {
+        return get(columnIndex, BigDecimal.class);
     }
 
     @Override
-    public String getString(int index) {
-        return (String) getValue(index);
+    public String getString(int columnIndex) {
+        return get(columnIndex, String.class);
     }
 
     @Override
-    public Object getObject(int index) {
-        return getValue(index);
+    public Object getObject(int columnIndex) {
+        return getValue(columnIndex);
     }
 
     @Override
@@ -191,6 +176,40 @@ public class ResultRowImpl implements ResultRow {
             map = new LinkedHashMap<>();
         }
         return map;
+    }
+
+    private Object getValue(String columnName) {
+        if (!hasText(columnName)) {
+            throw new RuntimeException("Column " + columnName + " not found.");
+        }
+        Map<String, Object> m = toMap();
+        String key = columnName.toUpperCase();
+        if (!m.containsKey(key)) {
+            throw new RuntimeException("Column " + key + " not found.");
+        }
+        return m.get(key);
+    }
+
+    private Object getValue(int columnIndex) {
+        return getValue(getColumnNames().get(columnIndex));
+    }
+
+    @Override
+    public <T> T get(String columnName, Class<T> typeClass) {
+        Object value = getValue(columnName);
+        if (value == null) {
+            return null;
+        }
+        TypeConverter<T> converter = TypeConverters.get(typeClass);
+        if (converter == null) {
+            throw new FluentQueryException("TypeConverter " + typeClass.getName() + " not found.");
+        }
+        return converter.convert(value);
+    }
+
+    @Override
+    public <T> T get(int columnIndex, Class<T> typeClass) {
+        return get(getColumnNames().get(columnIndex), typeClass);
     }
 
 }
