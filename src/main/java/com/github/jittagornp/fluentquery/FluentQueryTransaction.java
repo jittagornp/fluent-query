@@ -18,6 +18,8 @@ import org.slf4j.LoggerFactory;
  * @author jitta
  */
 public class FluentQueryTransaction {
+    
+    private static final int ID_SIZE = 8;
 
     private static final Logger LOG = LoggerFactory.getLogger(FluentQueryTransaction.class);
 
@@ -40,7 +42,7 @@ public class FluentQueryTransaction {
         return UUID.randomUUID()
                 .toString()
                 .replace("-", "")
-                .substring(0, 8)
+                .substring(0, ID_SIZE)
                 .toUpperCase();
     }
 

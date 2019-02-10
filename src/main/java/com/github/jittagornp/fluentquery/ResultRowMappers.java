@@ -20,7 +20,7 @@ public class ResultRowMappers {
 
     static {
         TypeConverters.keys().forEach(typeClass -> {
-            register(typeClass, new CastValueResultRowMapper(typeClass));
+            register(typeClass, new TypeResultRowMapper(typeClass));
         });
         register(Map.class, new MapResultRowMapper());
     }

@@ -10,11 +10,11 @@ package com.github.jittagornp.fluentquery;
  * @author jitta
  * @param <T>
  */
-public class CastValueResultRowMapper<T> implements ResultRowMapper<T> {
+public class TypeResultRowMapper<T> implements ResultRowMapper<T> {
 
     private final Class<T> typeClass;
 
-    public CastValueResultRowMapper(Class<T> typeClass) {
+    public TypeResultRowMapper(Class<T> typeClass) {
         this.typeClass = typeClass;
     }
 
