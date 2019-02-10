@@ -1,6 +1,12 @@
 # fluent-query
 Fluent Jdbc Query API for Java
 
+# Configuration
+ 
+> classpath : /application.properties
+
+use Hikari CP for manage Database Connection Pool  
+https://github.com/brettwooldridge/HikariCP
 
 # How to 
 
