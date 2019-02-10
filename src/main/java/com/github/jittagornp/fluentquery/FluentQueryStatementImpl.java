@@ -62,7 +62,7 @@ public class FluentQueryStatementImpl implements FluentQueryStatement {
         for (int i = 0; i < ps.size(); i++) {
             Object value = ps.get(i);
             statement.setObject(i + 1, value);
-            LOG.debug("[{}] : setParam [{}] => ({}) {}",
+            LOG.debug("[{}] : param [{}] => ({}) {}",
                     context.getTxId(),
                     (i + 1),
                     value == null ? "null" : value.getClass().getSimpleName(),

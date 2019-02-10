@@ -23,7 +23,8 @@ public class FluentQueryIT {
 
     @Test
     public void getOne() throws SQLException {
-        ResultRow row = FluentQuery.ofSql("SELECT id FROM user WHERE username = ?")
+        String sql = "SELECT id FROM user WHERE username = ?";
+        ResultRow row = FluentQuery.of(sql)
                 .param("test")
                 .query()
                 .map()
@@ -33,7 +34,8 @@ public class FluentQueryIT {
 
     @Test
     public void getOneMapClass() throws SQLException {
-        String id = FluentQuery.ofSql("SELECT id FROM user WHERE username = ?")
+        String sql = "SELECT id FROM user WHERE username = ?";
+        String id = FluentQuery.of(sql)
                 .param("test")
                 .query()
                 .map(String.class)
@@ -43,7 +45,8 @@ public class FluentQueryIT {
 
     @Test
     public void getList() throws SQLException {
-        List<ResultRow> rows = FluentQuery.ofSql("SELECT domain_name FROM oauth2_allow_domain")
+        String sql = "SELECT domain_name FROM oauth2_allow_domain";
+        List<ResultRow> rows = FluentQuery.of(sql)
                 .query()
                 .map()
                 .getList();
@@ -54,7 +57,8 @@ public class FluentQueryIT {
 
     @Test
     public void getListMapClass() throws SQLException {
-        List<String> domains = FluentQuery.ofSql("SELECT domain_name FROM oauth2_allow_domain")
+        String sql = "SELECT domain_name FROM oauth2_allow_domain";
+        List<String> domains = FluentQuery.of(sql)
                 .query()
                 .map(String.class)
                 .getList();
@@ -65,7 +69,8 @@ public class FluentQueryIT {
 
     @Test
     public void mapObjectClass() throws SQLException {
-        User user = FluentQuery.ofSql("SELECT * FROM user WHERE username = ?")
+        String sql = "SELECT * FROM user WHERE username = ?";
+        User user = FluentQuery.of(sql)
                 .param("test")
                 .query()
                 .map(User.class)
@@ -77,13 +82,15 @@ public class FluentQueryIT {
     public void transaction(){
         defineTx(tx -> {
             
-            FluentQuery.ofSql("UPDATE user set updated_date = ?, updated_user = ? WHERE username = ?")
+            String sql = "UPDATE user set updated_date = ?, updated_user = ? WHERE username = ?";
+            
+            FluentQuery.of(sql)
                     .param(LocalDateTime.now())
                     .param("jittagornp")
                     .param("test1")
                     .update(tx);
             
-            FluentQuery.ofSql("UPDATE user set updated_date = ?, updated_user = ? WHERE username = ?")
+            FluentQuery.of(sql)
                     .param(LocalDateTime.now())
                     .param("jittagornp")
                     .param("test2")

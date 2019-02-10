@@ -15,7 +15,7 @@ public class FluentQuery {
 
     }
 
-    public static FluentQueryStatement ofSql(String sql) {
+    public static FluentQueryStatement of(String sql) {
         return new FluentQueryStatementImpl(sql);
     }
 
