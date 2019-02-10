@@ -4,44 +4,91 @@ Fluent Jdbc Query API for Java
 
 # How to 
 
-### Simple 
+### getOne 
 ```java
-Integer id = 1;
-String username = FluentQuery.ofSql("SELECT username FROM user WHERE id = ?")
-                    .param(id)
-                    .query()
-                    .map(String.class)
-                    .getOne();
+ResultRow row = FluentQuery.ofSql("SELECT id FROM user WHERE username = ?")
+                            .param("test")
+                            .query()
+                            .map()
+                            .getOne();
+LOG.debug("id => {}", row.getString("id"));
 ```
-### Map to Class 
+### getOneMapClass
 ```java
-Integer id = 1;
-User user = FluentQuery.ofSql("SELECT * FROM user WHERE id = ?")
-              .param(id)
-              .query()
-              .map(User.class)
-              .getOne();
-```
-
-### Get List 
-``` java
-List<String> domains = FluentQuery.ofSql("SELECT domain_name FROM oauth2_allow_domain")
+String id = FluentQuery.ofSql("SELECT id FROM user WHERE username = ?")
+                        .param("test")
                         .query()
                         .map(String.class)
-                        .getList();
+                        .getOne();
+LOG.debug("id => {}", id);
 ```
 
-### Transaction 
+### getList 
+``` java
+List<ResultRow> rows = FluentQuery.ofSql("SELECT domain_name FROM oauth2_allow_domain")
+                                  .query()
+                                  .map()
+                                  .getList();
+rows.stream().forEach(r -> {
+    LOG.debug("domain => {}", r.getString("domain_name"));
+});
+```
+
+### getListMapClass
+``` java
+List<String> domains = FluentQuery.ofSql("SELECT domain_name FROM oauth2_allow_domain")
+                                  .query()
+                                  .map(String.class)
+                                  .getList();
+domains.stream().forEach(domain -> {
+    LOG.debug("domain => {}", domain);
+});
+```
+
+### mapObjectClass
+``` java
+public class User {
+
+    @ColumnMapping("ID")
+    private String id;
+
+    @ColumnMapping("USERNAME")
+    private String username;
+
+    @ColumnMapping("PASSWORD")
+    private String password;
+
+    @ColumnMapping("CREATED_DATE")
+    private LocalDateTime createdDate;
+
+    @ColumnMapping("CREATED_USER")
+    private String createdUser;
+    
+    //getter and setter 
+}
+
+User user = FluentQuery.ofSql("SELECT * FROM user WHERE username = ?")
+                        .param("test")
+                        .query()
+                        .map(User.class)
+                        .getOne();
+LOG.debug("user => {}", user);
+```
+
+### transaction
 ``` java
 defineTx(tx -> {
-    
-    ...
-    ...
-   
-    FluentQuery.ofSql("UPDATE user SET name = ? WHERE id = ?")
-      .param("Jiattgorn")
-      .param(1)
-      .update(tx);
-    
+
+        FluentQuery.ofSql("UPDATE user set updated_date = ?, updated_user = ? WHERE username = ?")
+                .param(LocalDateTime.now())
+                .param("jittagornp")
+                .param("test1")
+                .update(tx);
+
+        FluentQuery.ofSql("UPDATE user set updated_date = ?, updated_user = ? WHERE username = ?")
+                .param(LocalDateTime.now())
+                .param("jittagornp")
+                .param("test2")
+                .update(tx);
 });
 ```
