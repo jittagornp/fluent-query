@@ -6,6 +6,7 @@
 package com.github.jittagornp.fluentquery;
 
 import static com.github.jittagornp.fluentquery.FluentQueryTransaction.defineTx;
+import static com.github.jittagornp.fluentquery.StringUtils.hasText;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -42,6 +43,16 @@ public class FluentQueryStatementImpl implements FluentQueryStatement {
 
     @Override
     public FluentQueryStatement param(Object object) {
+
+        if (object instanceof String) {
+            String value = (String) object;
+            if (hasText(value)) {
+                object = value.trim();
+            } else {
+                object = null;
+            }
+        }
+
         getParams().add(object);
         return this;
     }
@@ -51,10 +62,10 @@ public class FluentQueryStatementImpl implements FluentQueryStatement {
         for (int i = 0; i < ps.size(); i++) {
             Object value = ps.get(i);
             statement.setObject(i + 1, value);
-            LOG.debug("[{}] : setParam [{}] => ({}) {}", 
-                    context.getTxId(), 
-                    (i+1), 
-                    value == null ? "null" : value.getClass().getSimpleName(), 
+            LOG.debug("[{}] : setParam [{}] => ({}) {}",
+                    context.getTxId(),
+                    (i + 1),
+                    value == null ? "null" : value.getClass().getSimpleName(),
                     value
             );
         }
